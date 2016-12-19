@@ -24,7 +24,6 @@ function generateAuthInfo(appId, apiSecretKey) {
 }
 
 
-
 test('List available templates', (t) => {
 
     t.plan(1)
