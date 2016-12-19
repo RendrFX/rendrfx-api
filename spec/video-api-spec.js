@@ -5,8 +5,8 @@ import crypto from 'crypto'
 //Pass the following args to the process
 const {
     NODE_ENV,
-    APP_ID = "12345",
-    API_SECRET_KEY = "12345",
+    APP_ID,
+    API_SECRET_KEY,
     API_HOST = "https://api.rendrfx.com"
 } = process.env.NODE_ENV;
 
@@ -23,6 +23,7 @@ function generateAuthInfo(appId, apiSecretKey) {
     }
 }
 
+doTryExitProcess();
 
 test('List available templates', (t) => {
 
@@ -90,3 +91,14 @@ test('Get video status', (t) => {
 test('Test video is done webhook', (t) => {
     t.plan(1)
 });
+
+function doTryExitProcess() {
+    if (APP_ID === null {
+        console.log('Please define a valid APP_ID for process.env.APP_ID');
+        process.exit(0);
+    }
+    if (API_SECRET_KEY === null {
+        console.log('Please define a valid API_SECRET_KEY for process.env.API_SECRET_KEY');
+        process.exit(0);
+    }
+}
