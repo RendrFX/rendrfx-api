@@ -28,6 +28,8 @@ build/Release
 
 # Dependency directories
 node_modules
+dist-spec
+dist
 jspm_packages
 
 # Optional npm cache directory

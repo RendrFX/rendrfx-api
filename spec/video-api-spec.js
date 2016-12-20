@@ -7,8 +7,8 @@ const {
     NODE_ENV,
     APP_ID,
     API_SECRET_KEY,
-    API_HOST = "https://api.rendrfx.com"
-} = process.env.NODE_ENV;
+    API_HOST = "https://api.rendrfx.com/"
+} = process.env;
 
 function generateAuthInfo(appId, apiSecretKey, manualDateInMilliseconds) {
     // Generate HMAC
@@ -31,6 +31,7 @@ test('List available templates', (t) => {
     const templatesEndpoint = API_HOST + "v1/templates/"
     const {TOKEN, TIMESTAMP} = generateAuthInfo(APP_ID, API_SECRET_KEY);
     // TODO: Add test to get all templates
+    t.equal(true, true)
 });
 
 test('Get template info', (t) => {
@@ -99,8 +100,8 @@ test('Create video', (t) => {
             media: ['https://s3.amazonaws.com/re.bucket/images/re.logo.square.png'],
             text: ['www.hotdog.com'],
             color: ['#84C53D'],
-        }]
-        audio: ''
+        }],
+        audio: '',
         TOKEN,
         TIMESTAMP
     };
@@ -192,17 +193,16 @@ function doBadRequestTests(t, method, endpoint, data) {
     .set('Accept', 'application/json')
     .end(function(err, res){
 
-        t.equal(err.status, 406, "Should be a 406 given a bad token");
+        t.equal(err.status, 406, "Should be a 406 given a expired token");
         t.equal(res.body.message, "Token has expired");
     });
 }
 
 function doTryExitProcess() {
-    if (APP_ID === null {
+    if (!APP_ID) {
         console.log('Please define a valid APP_ID for process.env.APP_ID');
         process.exit(0);
-    }
-    if (API_SECRET_KEY === null {
+    } else if (!API_SECRET_KEY) {
         console.log('Please define a valid API_SECRET_KEY for process.env.API_SECRET_KEY');
         process.exit(0);
     }
