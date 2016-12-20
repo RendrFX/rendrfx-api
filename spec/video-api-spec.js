@@ -41,13 +41,11 @@ test('Get template info', (t) => {
     const {TOKEN, TIMESTAMP} = generateAuthInfo(APP_ID, API_SECRET_KEY);
 
     const expectedTemplateInfo = {
-        templateInfo: {
-            name: 'Motion Glam Logo Reveal',
-            previewMedia: {
-                video: 'https://dpteq7m4zmhsm.cloudfront.net/-KR_Tor-2oEhEh8vJpAO/preview_media/preview_video.mp4',
-                image: 'https://dpteq7m4zmhsm.cloudfront.net/-KR_Tor-2oEhEh8vJpAO/preview_media/preview_image.jpg',
-                thumbnail: 'https://dpteq7m4zmhsm.cloudfront.net/-KR_Tor-2oEhEh8vJpAO/preview_media/preview_thumb.png'
-            }
+        name: 'Motion Glam Logo Reveal',
+        previewMedia: {
+            video: 'https://dpteq7m4zmhsm.cloudfront.net/-KR_Tor-2oEhEh8vJpAO/preview_media/preview_video.mp4',
+            image: 'https://dpteq7m4zmhsm.cloudfront.net/-KR_Tor-2oEhEh8vJpAO/preview_media/preview_image.jpg',
+            thumbnail: 'https://dpteq7m4zmhsm.cloudfront.net/-KR_Tor-2oEhEh8vJpAO/preview_media/preview_thumb.png'
         },
         inputConfig: {
             scenes: [{

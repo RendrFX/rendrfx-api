@@ -52,6 +52,8 @@ You can fetch a list of available templates.
 
 * `https://api.rendrfx.com/v1/templates`
 
+**Request parameters**
+
 | Path Parameters | Query Parameters | Required | Description |
 | --- | --- | --- | --- |
 | | token | yes | The security token generated using HMAC SHA-256 |
@@ -61,7 +63,7 @@ You can fetch a list of available templates.
 
 ```shell
     $ curl \
-    -s https://api.rendrfx.com/via/templates?token=c54c41281c45bfb2d7b86b56ff89961290b406f66cec6431dccce859a4a8522f&timestamp=1482246580660 \
+    -s https://api.rendrfx.com/v1/templates?token=c54c41281c45bfb2d7b86b56ff89961290b406f66cec6431dccce859a4a8522f&timestamp=1482246580660 \
     -H 'X-API-Appid: yourAppId' \
     -H 'X-API-Key: yourSecretKey' \
     -H 'Accept:application/json'
@@ -78,6 +80,8 @@ Each template object has its own URL -
 
 Where `:template_id` is the value of the template's id field. This URL is the templates's canonical address in the API.
 
+**Request parameters**
+
 | Path Parameters | Query Parameters | Required | Description |
 | --- | --- | --- | --- |
 | | token | yes | The security token generated using HMAC SHA-256 |
@@ -88,7 +92,7 @@ Where `:template_id` is the value of the template's id field. This URL is the te
 
 ```shell
     $ curl \
-    -s https://api.rendrfx.com/via/templates/-KR_Tor-2oEhEh8vJpAO?token=c54c41281c45bfb2d7b86b56ff89961290b406f66cec6431dccce859a4a8522f&timestamp=1482246580660 \
+    -s https://api.rendrfx.com/v1/templates/-KR_Tor-2oEhEh8vJpAO?token=c54c41281c45bfb2d7b86b56ff89961290b406f66cec6431dccce859a4a8522f&timestamp=1482246580660 \
     -H 'X-API-Appid: yourAppId' \
     -H 'X-API-Key: yourSecretKey' \
     -H 'Accept:application/json'
@@ -97,3 +101,92 @@ Where `:template_id` is the value of the template's id field. This URL is the te
 
 ### Returns
 A template object.
+
+# Videos
+The videos resource allows you to create video jobs and get information the status of the jobs.
+
+
+## Create a video
+Videos can be created via a `POST` method to `https://api/rendrfx.com/v1/videos/create`
+
+**Attributes**
+The table below shows the fields you can add to create a video
+
+| Parameters | Required | Description |
+| --- | --- | --- |
+| scenes | yes | An array of scene objects.|
+| sound | no | A url to an audio file to add to the overall video. |
+| token | yes | The security token generated using HMAC SHA-256 |
+| timestamp | yes | The timestamp in milleseconds used to generate the token.|
+
+**Example create video request**
+```shell
+    $ curl https://api/rendrfx.com/v1/videos/create \
+    -X POST \
+    -H 'X-API-Appid: yourAppId' \
+    -H 'X-API-Key: yourSecretKey' \
+    -H 'Accept:application/json' \
+    -H 'Content-Type: application/json' -d '
+    {
+       "scenes":[
+          {
+             "media":[
+                "https://s3.amazonaws.com/re.bucket/images/re.logo.square.png"
+             ],
+             "text":[
+                "www.websiteurl.com"
+             ],
+             "color":[
+                "#84C53D"
+             ]
+          }
+       ],
+       "audio":"www.url.com/to/audio/file.mp3",
+       "token":"c54c41281c45bfb2d7b86b56ff89961290b406f66cec6431dccce859a4a8522f",
+       "timestamp":1482246580660
+    }'
+```
+
+### Returns
+A job unique identifier in string format. An example job id would look like this `-KR3g3BhjmS00k3vMmJC`.
+
+## View status of a video
+Each video job will have it's own status URL -
+
+* `https://api.rendrfx.com/v1/videos/status/:job_id`
+
+Where `:job_id` is the value of the video job id returned by the create video endpoint. This URL is the canonical address in the API.
+
+**Request parameters**
+
+| Path Parameters | Query Parameters | Required | Description |
+| --- | --- | --- | --- |
+| job_id | | yes | The id defined for the video job. |
+| | token | yes | The security token generated using HMAC SHA-256 |
+| | timestamp | yes | The timestamp in milleseconds used to generate the token.|
+
+**Example video status request**
+
+```shell
+    $ curl \
+    -s https://api.rendrfx.com/v1/videos/status/-KR3g3BhjmS00k3vMmJC?token=c54c41281c45bfb2d7b86b56ff89961290b406f66cec6431dccce859a4a8522f&timestamp=1482246580660 \
+    -H 'X-API-Appid: yourAppId' \
+    -H 'X-API-Key: yourSecretKey' \
+    -H 'Accept:application/json'
+```
+### Returns
+A video status object.
+
+### Template Object
+
+A template object contains the following fields.
+
+| Attribute | Type | Description |
+| --- | --- | --- |
+
+### Scene Object
+
+A scene object contains the following fields.
+
+| Attribute | Type | Description |
+| --- | --- | --- |
