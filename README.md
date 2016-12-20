@@ -26,7 +26,7 @@ RendrFX requires you send an authentication token along with a timestamp with ea
 
 Here is an example using Node.
 
-```
+```javascript
     import crypto from 'crypto'
 
     const appId = 'your app id';
