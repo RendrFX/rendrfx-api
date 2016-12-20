@@ -14,3 +14,6 @@ The API is organized around the following resources -
 **Job Completed Payload Delivery**
 
 Payload will be delivered via server to server webhook.
+
+## Templates
+The templates resource allows you to get information about the templates that are available to your account. Templates can be viewed individually or as a list.
