@@ -57,7 +57,9 @@ You can fetch a list of available templates.
 | | token | yes | The security token generated using HMAC SHA-256 |
 | | timestamp | yes | The timestamp in milleseconds used to generate the token.|
 
-```
+**Example list templates request**
+
+```shell
     $ curl \
     -s https://api.rendrfx.com/via/templates?token=c54c41281c45bfb2d7b86b56ff89961290b406f66cec6431dccce859a4a8522f&timestamp=1482246580660 \
     -H 'X-API-Appid: yourAppId' \
@@ -65,7 +67,33 @@ You can fetch a list of available templates.
     -H 'Accept:application/json'
 ```
 
-Returns
+### Returns
 A list of templates. The templates list contains an array of template objects.
 
-## Get individual template
+## View an individual template
+
+Each template object has its own URL -
+
+* `https://api.rendrfx.com/v1/templates/:template_id`
+
+Where `:template_id` is the value of the template's id field. This URL is the templates's canonical address in the API.
+
+| Path Parameters | Query Parameters | Required | Description |
+| --- | --- | --- | --- |
+| | token | yes | The security token generated using HMAC SHA-256 |
+| | timestamp | yes | The timestamp in milleseconds used to generate the token.|
+| template_id | | yes | The id defined for the template. |
+
+**Example view template request**
+
+```shell
+    $ curl \
+    -s https://api.rendrfx.com/via/templates/-KR_Tor-2oEhEh8vJpAO?token=c54c41281c45bfb2d7b86b56ff89961290b406f66cec6431dccce859a4a8522f&timestamp=1482246580660 \
+    -H 'X-API-Appid: yourAppId' \
+    -H 'X-API-Key: yourSecretKey' \
+    -H 'Accept:application/json'
+```
+
+
+### Returns
+A template object.

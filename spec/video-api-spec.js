@@ -1,13 +1,12 @@
-import test from 'tape'
-import superagent from 'superagent'
-import crypto from 'crypto'
+import test from 'tape';
+import superagent from 'superagent';
+import crypto from 'crypto';
 
 //Pass the following args to the process
 const {
-    NODE_ENV,
     APP_ID,
     API_SECRET_KEY,
-    API_HOST = "https://api.rendrfx.com/"
+    API_HOST = 'https://api.rendrfx.com/'
 } = process.env;
 
 function generateAuthInfo(appId, apiSecretKey, manualDateInMilliseconds) {
@@ -20,25 +19,25 @@ function generateAuthInfo(appId, apiSecretKey, manualDateInMilliseconds) {
     return {
         TOKEN: token,
         TIMESTAMP: unixTimeInMilliseconds
-    }
+    };
 }
 
 doTryExitProcess();
 
 test('List available templates', (t) => {
 
-    t.plan(1)
-    const templatesEndpoint = API_HOST + "v1/templates/"
+    t.plan(1);
+    const templatesEndpoint = API_HOST + 'v1/templates/';
     const {TOKEN, TIMESTAMP} = generateAuthInfo(APP_ID, API_SECRET_KEY);
     // TODO: Add test to get all templates
-    t.equal(true, true)
+    t.equal(true, true);
 });
 
 test('Get template info', (t) => {
 
-    t.plan(8)
+    t.plan(8);
     const templateId = '-KR_Tor-2oEhEh8vJpAO';
-    const templateEndpoint = API_HOST + "v1/templates/" + templateId
+    const templateEndpoint = API_HOST + 'v1/templates/' + templateId;
     const {TOKEN, TIMESTAMP} = generateAuthInfo(APP_ID, API_SECRET_KEY);
 
     const expectedTemplateInfo = {
@@ -54,44 +53,44 @@ test('Get template info', (t) => {
             scenes: [{
                 media: [''],
                 text: [''],
-                color: ['', ''],
+                color: ['', '']
             }],
-            audio: '',
+            audio: ''
         }
-    }
+    };
 
     superagent.get(templateEndpoint)
     .set('X-API-Appid', APP_ID)
     .set('X-API-Key', API_SECRET_KEY)
     .set('Accept', 'application/json')
-    .end(function(err, res){
+    .end(function (err, res){
 
         if (err) {
             console.log('Err in get template info success test: ', err);
-            t.fail(res.body.message)
+            t.fail(res.body.message);
         }
 
         const template = res.body ? res.body.data : (res || {});
         const {templateInfo, inputConfig} = template;
-        const {scenes, audio} = inputConfig
-        t.equal(templateInfo.name, expectedTemplateInfo.templateInfo.name, "Should have name: " + expectedTemplateInfo.templateInfo.name)
-        t.equal(templateInfo.previewMedia.video, expectedTemplateInfo.templateInfo.previewMedia.video, "Should have preview video: " + expectedTemplateInfo.templateInfo.previewMedia.video)
-        t.equal(templateInfo.previewMedia.image, expectedTemplateInfo.templateInfo.previewMedia.image, "Should have preview image: " + expectedTemplateInfo.templateInfo.previewMedia.image)
-        t.equal(templateInfo.previewMedia.thumbnail, expectedTemplateInfo.templateInfo.previewMedia.thumbnail, "Should have preview thumbnail: " + expectedTemplateInfo.templateInfo.previewMedia.thumbnail)
-        t.equal(scenes[0].media.length, 1, "Should have 1 media placeholder")
-        t.equal(scenes[0].text.length, 1, "Should have 1 text placeholder")
-        t.equal(scenes[0].color.length, 2, "Should have 2 color placeholders")
-        t.equal(audio,'', "Should have audio placeholder")
+        const {scenes, audio} = inputConfig;
+        t.equal(templateInfo.name, expectedTemplateInfo.templateInfo.name, 'Should have name: ' + expectedTemplateInfo.templateInfo.name);
+        t.equal(templateInfo.previewMedia.video, expectedTemplateInfo.templateInfo.previewMedia.video, 'Should have preview video: ' + expectedTemplateInfo.templateInfo.previewMedia.video);
+        t.equal(templateInfo.previewMedia.image, expectedTemplateInfo.templateInfo.previewMedia.image, 'Should have preview image: ' + expectedTemplateInfo.templateInfo.previewMedia.image);
+        t.equal(templateInfo.previewMedia.thumbnail, expectedTemplateInfo.templateInfo.previewMedia.thumbnail, 'Should have preview thumbnail: ' + expectedTemplateInfo.templateInfo.previewMedia.thumbnail);
+        t.equal(scenes[0].media.length, 1, 'Should have 1 media placeholder');
+        t.equal(scenes[0].text.length, 1, 'Should have 1 text placeholder');
+        t.equal(scenes[0].color.length, 2, 'Should have 2 color placeholders');
+        t.equal(audio, '', 'Should have audio placeholder');
     });
 
-    doBadRequestTests(t, 'GET', templateEndpoint, {})
+    doBadRequestTests(t, 'GET', templateEndpoint, {});
 
 });
 
 test('Create video', (t) => {
 
-    t.plan(9)
-    const createVideoEndpoint = API_HOST + "v1/videos/create/"
+    t.plan(9);
+    const createVideoEndpoint = API_HOST + 'v1/videos/create/';
     const templateId = '-KR_Tor-2oEhEh8vJpAO';
     const {TOKEN, TIMESTAMP} = generateAuthInfo(APP_ID, API_SECRET_KEY);
 
@@ -99,7 +98,7 @@ test('Create video', (t) => {
         scenes: [{
             media: ['https://s3.amazonaws.com/re.bucket/images/re.logo.square.png'],
             text: ['www.hotdog.com'],
-            color: ['#84C53D'],
+            color: ['#84C53D']
         }],
         audio: '',
         TOKEN,
@@ -111,37 +110,37 @@ test('Create video', (t) => {
     .set('X-API-Appid', APP_ID)
     .set('X-API-Key', API_SECRET_KEY)
     .set('Accept', 'application/json')
-    .end(function(err, res){
+    .end(function (err, res){
 
         if (err) {
             console.log('Err in create video success test: ', err);
-            t.fail(res.body.message)
+            t.fail(res.body.message);
         }
 
         const body = res.body ? res.body.data : (res || {});
-        t.equal(typeof body.jobId === "string" && body.jobId.length > 0, true, "Create video Video Job Id exists and is a string")
+        t.equal(typeof body.jobId === 'string' && body.jobId.length > 0, true, 'Create video Video Job Id exists and is a string');
     });
 
-    doBadRequestTests(t, 'POST', `${createVideoEndpoint}${templateId}`, videoInputData)
+    doBadRequestTests(t, 'POST', `${createVideoEndpoint}${templateId}`, videoInputData);
 
 });
 
 test('Get video status', (t) => {
-    t.plan(1)
-    const videoStatusEndpoint = API_HOST + "v1/videos/status/";
+    t.plan(1);
+    const videoStatusEndpoint = API_HOST + 'v1/videos/status/';
     // TODO: Add test to get video job status
 });
 
 test('Test video is done webhook', (t) => {
-    t.plan(1)
+    t.plan(1);
 
     // TODO: Add test to get video job
 });
 
 const methodMap = {
     POST: ['post', 'send'],
-    GET: ['get', 'query'],
-}
+    GET: ['get', 'query']
+};
 
 function doBadRequestTests(t, method, endpoint, data) {
     // 8 tests
@@ -151,10 +150,10 @@ function doBadRequestTests(t, method, endpoint, data) {
     .set('X-API-Appid', 'bad_app_id')
     .set('X-API-Key', API_SECRET_KEY)
     .set('Accept', 'application/json')
-    .end(function(err, res){
+    .end(function (err, res){
 
-        t.equal(err.status, 403,"Should be a 403 given a bad app id");
-        t.equal(res.body.message, "Authentication headers missing");
+        t.equal(err.status, 403, 'Should be a 403 given a bad app id');
+        t.equal(res.body.message, 'Authentication headers missing');
     });
 
     superagent[methodMap[method][0]](endpoint)
@@ -162,27 +161,27 @@ function doBadRequestTests(t, method, endpoint, data) {
     .set('X-API-Appid', APP_ID)
     .set('X-API-Key', 'bad_secret_key')
     .set('Accept', 'application/json')
-    .end(function(err, res){
+    .end(function (err, res){
 
-        t.equal(err.status, 407, "Should be a 407 given a bad app secret key");
-        t.equal(res.body.message, "Authentication headers missing");
+        t.equal(err.status, 407, 'Should be a 407 given a bad app secret key');
+        t.equal(res.body.message, 'Authentication headers missing');
     });
 
-    const dataBadToken = Object.assign({}, data, {TOKEN: 'not a good token'})
+    const dataBadToken = Object.assign({}, data, {TOKEN: 'not a good token'});
 
     superagent[methodMap[method][0]](endpoint)
     [methodMap[method][1]](data)
     .set('X-API-Appid', APP_ID)
     .set('X-API-Key', API_SECRET_KEY)
     .set('Accept', 'application/json')
-    .end(function(err, res){
+    .end(function (err, res){
 
-        t.equal(err.status, 406, "Should be a 406 given a bad token");
-        t.equal(res.body.message, "Invalid token");
+        t.equal(err.status, 406, 'Should be a 406 given a bad token');
+        t.equal(res.body.message, 'Invalid token');
     });
 
     const expiredDate = new Date();
-    expiredDate.setTime(expiredDate.getTime() - (4*60*60*1000)); //set three hours behind
+    expiredDate.setTime(expiredDate.getTime() - (4 * 60 * 60 * 1000)); //set three hours behind
     const badAuthData = generateAuthInfo(APP_ID, API_SECRET_KEY, expiredDate.getTime());
     const dataTokenExpired = Object.assign({}, data, {TOKEN: badAuthData.token});
 
@@ -191,10 +190,10 @@ function doBadRequestTests(t, method, endpoint, data) {
     .set('X-API-Appid', APP_ID)
     .set('X-API-Key', API_SECRET_KEY)
     .set('Accept', 'application/json')
-    .end(function(err, res){
+    .end(function (err, res){
 
-        t.equal(err.status, 406, "Should be a 406 given a expired token");
-        t.equal(res.body.message, "Token has expired");
+        t.equal(err.status, 406, 'Should be a 406 given a expired token');
+        t.equal(res.body.message, 'Token has expired');
     });
 }
 
