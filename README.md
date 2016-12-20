@@ -27,21 +27,21 @@ RendrFX requires you send an authentication token along with a timestamp with ea
 Here is an example using Node.
 
 ```javascript
-    import crypto from 'crypto'
+import crypto from 'crypto'
 
-    const appId = 'your app id';
-    const apiSecretKey = 'your secret key';
+const appId = 'your app id';
+const apiSecretKey = 'your secret key';
 
-    // Generate HMAC
-    const unixTimeInMilliseconds = manualDateInMilliseconds || Date.now(); //Generate timestamp
-    const key = apiSecretKey + unixTimeInMilliseconds; //Create key for hash
-    const hmac = crypto.createHmac('sha256', key); // Create HMAC instance
-    hmac.update(appId); //Sign using appId
+// Generate HMAC
+const unixTimeInMilliseconds = manualDateInMilliseconds || Date.now(); //Generate timestamp
+const key = apiSecretKey + unixTimeInMilliseconds; //Create key for hash
+const hmac = crypto.createHmac('sha256', key); // Create HMAC instance
+hmac.update(appId); //Sign using appId
 
 
-    //These two values need to be sent with every request
-    const token = hmac.digest('hex'); //Encode using hex encoding
-    const timestamp = unixTimeInMilliseconds;
+//These two values need to be sent with every request
+const token = hmac.digest('hex'); //Encode using hex encoding
+const timestamp = unixTimeInMilliseconds;
 ```
 
 # Templates
@@ -54,19 +54,19 @@ You can fetch a list of available templates.
 
 **Request parameters**
 
-| Path Parameters | Query Parameters | Required | Description |
-| --- | --- | --- | --- |
-| | token | yes | The security token generated using HMAC SHA-256 |
-| | timestamp | yes | The timestamp in milleseconds used to generate the token.|
+| Query Parameters | Required | Description |
+| --- | --- | --- |
+| token | yes | The security token generated using HMAC SHA-256 |
+| timestamp | yes | The timestamp in milleseconds used to generate the token.|
 
 **Example list templates request**
 
 ```shell
-    $ curl \
-    -s https://api.rendrfx.com/v1/templates?token=c54c41281c45bfb2d7b86b56ff89961290b406f66cec6431dccce859a4a8522f&timestamp=1482246580660 \
-    -H 'X-API-Appid: yourAppId' \
-    -H 'X-API-Key: yourSecretKey' \
-    -H 'Accept:application/json'
+$ curl \
+-s https://api.rendrfx.com/v1/templates?token=c54c41281c45bfb2d7b86b56ff89961290b406f66cec6431dccce859a4a8522f&timestamp=1482246580660 \
+-H 'X-API-Appid: yourAppId' \
+-H 'X-API-Key: yourSecretKey' \
+-H 'Accept:application/json'
 ```
 
 ### Returns
@@ -91,11 +91,11 @@ Where `:template_id` is the value of the template's id field. This URL is the te
 **Example view template request**
 
 ```shell
-    $ curl \
-    -s https://api.rendrfx.com/v1/templates/-KR_Tor-2oEhEh8vJpAO?token=c54c41281c45bfb2d7b86b56ff89961290b406f66cec6431dccce859a4a8522f&timestamp=1482246580660 \
-    -H 'X-API-Appid: yourAppId' \
-    -H 'X-API-Key: yourSecretKey' \
-    -H 'Accept:application/json'
+$ curl \
+-s https://api.rendrfx.com/v1/templates/-KR_Tor-2oEhEh8vJpAO?token=c54c41281c45bfb2d7b86b56ff89961290b406f66cec6431dccce859a4a8522f&timestamp=1482246580660 \
+-H 'X-API-Appid: yourAppId' \
+-H 'X-API-Key: yourSecretKey' \
+-H 'Accept:application/json'
 ```
 
 
@@ -121,30 +121,30 @@ The table below shows the fields you can add to create a video
 
 **Example create video request**
 ```shell
-    $ curl https://api/rendrfx.com/v1/videos/create \
-    -X POST \
-    -H 'X-API-Appid: yourAppId' \
-    -H 'X-API-Key: yourSecretKey' \
-    -H 'Accept:application/json' \
-    -H 'Content-Type: application/json' -d '
-    {
-       "scenes":[
-          {
-             "media":[
-                "https://s3.amazonaws.com/re.bucket/images/re.logo.square.png"
-             ],
-             "text":[
-                "www.websiteurl.com"
-             ],
-             "color":[
-                "#84C53D"
-             ]
-          }
-       ],
-       "audio":"www.url.com/to/audio/file.mp3",
-       "token":"c54c41281c45bfb2d7b86b56ff89961290b406f66cec6431dccce859a4a8522f",
-       "timestamp":1482246580660
-    }'
+$ curl https://api/rendrfx.com/v1/videos/create \
+-X POST \
+-H 'X-API-Appid: yourAppId' \
+-H 'X-API-Key: yourSecretKey' \
+-H 'Accept:application/json' \
+-H 'Content-Type: application/json' -d '
+{
+   "scenes":[
+      {
+         "media":[
+            "https://s3.amazonaws.com/re.bucket/images/re.logo.square.png"
+         ],
+         "text":[
+            "www.websiteurl.com"
+         ],
+         "color":[
+            "#84C53D"
+         ]
+      }
+   ],
+   "audio":"www.url.com/to/audio/file.mp3",
+   "token":"c54c41281c45bfb2d7b86b56ff89961290b406f66cec6431dccce859a4a8522f",
+   "timestamp":1482246580660
+}'
 ```
 
 ### Returns
@@ -168,11 +168,11 @@ Where `:job_id` is the value of the video job id returned by the create video en
 **Example video status request**
 
 ```shell
-    $ curl \
-    -s https://api.rendrfx.com/v1/videos/status/-KR3g3BhjmS00k3vMmJC?token=c54c41281c45bfb2d7b86b56ff89961290b406f66cec6431dccce859a4a8522f&timestamp=1482246580660 \
-    -H 'X-API-Appid: yourAppId' \
-    -H 'X-API-Key: yourSecretKey' \
-    -H 'Accept:application/json'
+$ curl \
+-s https://api.rendrfx.com/v1/videos/status/-KR3g3BhjmS00k3vMmJC?token=c54c41281c45bfb2d7b86b56ff89961290b406f66cec6431dccce859a4a8522f&timestamp=1482246580660 \
+-H 'X-API-Appid: yourAppId' \
+-H 'X-API-Key: yourSecretKey' \
+-H 'Accept:application/json'
 ```
 ### Returns
 A video status object.
@@ -183,9 +183,71 @@ A template object contains the following fields.
 
 | Attribute | Type | Description |
 | --- | --- | --- |
+| name | string | The name of the template |
+| id | string | The RendrFX defined id representing the template. |
+| seconds | integer | The template duration in seconds |
+| mediaInputs | integer | The number of available customizable media inputs in this template |
+| textInputs | integer | The number of available customizable text inputs in this template |
+| colorInputs | integer | The number of available customizable color inputs in this template |
+| previewMedia | object | The preview media assets for the template. Includes video, image and thumbnail |
+| inputConfig | object | A list of scene objects. **_The order of the scenes list directly corresponds with the scene number, which important to keep in tact_**|
+
+**Example template object json**
+
+```json
+{  
+   "colorInputs":2,
+   "mediaInputs":1,
+   "name":"Supernova Logo Reveal",
+   "seconds":15,
+   "textInputs":0,
+   "id":"-KGOE9QkmBfga6EYUQaL",
+   "previewMedia":{  
+      "video":"https://dpteq7m4zmhsm.cloudfront.net/-KGOE9QkmBfga6EYUQaL/preview_media/preview_video.mp4",
+      "image":"https://dpteq7m4zmhsm.cloudfront.net/-KGOE9QkmBfga6EYUQaL/preview_media/preview_image.jpg",
+      "thumbnail":"https://dpteq7m4zmhsm.cloudfront.net/-KGOE9QkmBfga6EYUQaL/preview_media/preview_thumb.png"
+   },
+   "inputConfig":{  
+      "scenes":[  
+         {  
+            "color":[  
+               {  
+                  "r":40,
+                  "g":109,
+                  "b":73,
+                  "label":"Starburst"
+               },
+               {  
+                  "r":23,
+                  "g":52,
+                  "b":65,
+                  "label":"Background"
+               }
+            ],
+            "media":[  
+               ""
+            ],
+            "text":[  
+
+            ]
+         }
+      ],
+      "audio":""
+   }
+}
+```
 
 ### Scene Object
 
+A scene object contains the following fields.
+
+| Attribute | Type | Description |
+| --- | --- | --- |
+| media | list | A list of empty strings to be customized with media file urls to be sent via the create video endpoint. **The order of the media list directly corresponds to the number of the placeholder. So media[0] is the equivalent to media placeholder 1** |
+| text | list | A list of empty strings to be customized with text to be sent via the create video endpoint. **The order of the text list directly corresponds to the number of the placeholder. So text[0] is the equivalent to text placeholder 1** |
+| color | list | A list of RGB color objects to be customized with color and sent via the create video endpoint. Note that default colors are already pre-filled. **The order of the color list directly corresponds to the number of the placeholder. So color[0] is the equivalent to color placeholder 1** |
+
+### Video Status Object
 A scene object contains the following fields.
 
 | Attribute | Type | Description |

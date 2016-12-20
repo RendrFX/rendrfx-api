@@ -24,40 +24,99 @@ function generateAuthInfo(appId, apiSecretKey, manualDateInMilliseconds) {
 
 doTryExitProcess();
 
+const templatesExpectedData = [{
+    colorInputs: 2,
+    mediaInputs: 1,
+    name: 'Supernova Logo Reveal',
+    seconds: 15,
+    textInputs: 0,
+    id: '-KGOE9QkmBfga6EYUQaL',
+    previewMedia: {
+        video: 'https://dpteq7m4zmhsm.cloudfront.net/-KGOE9QkmBfga6EYUQaL/preview_media/preview_video.mp4',
+        image: 'https://dpteq7m4zmhsm.cloudfront.net/-KGOE9QkmBfga6EYUQaL/preview_media/preview_image.jpg',
+        thumbnail: 'https://dpteq7m4zmhsm.cloudfront.net/-KGOE9QkmBfga6EYUQaL/preview_media/preview_thumb.png'
+    },
+    inputConfig: {
+        scenes: [{
+            color: [{
+                r: 40,
+                g: 109,
+                b: 73,
+                label: 'Starburst'
+            }, {
+                r: 23,
+                g: 52,
+                b: 65,
+                label: 'Background'
+            }],
+            media: [''],
+            text: []
+        }],
+        audio: ''
+    }
+},
+{
+    id: '-KR_Tor-2oEhEh8vJpAO',
+    name: 'Motion Glam Logo Reveal',
+    previewMedia: {
+        video: 'https://dpteq7m4zmhsm.cloudfront.net/-KR_Tor-2oEhEh8vJpAO/preview_media/preview_video.mp4',
+        image: 'https://dpteq7m4zmhsm.cloudfront.net/-KR_Tor-2oEhEh8vJpAO/preview_media/preview_image.jpg',
+        thumbnail: 'https://dpteq7m4zmhsm.cloudfront.net/-KR_Tor-2oEhEh8vJpAO/preview_media/preview_thumb.png'
+    },
+    inputConfig: {
+        scenes: [{
+            media: [''],
+            text: [''],
+            color: ['', '']
+        }],
+        audio: ''
+    }
+}];
+
 test('List available templates', (t) => {
 
-    t.plan(1);
-    const templatesEndpoint = API_HOST + 'v1/templates/';
+    t.plan(28);
+    const templatesEndpoint = API_HOST + 'v1/templates';
     const {TOKEN, TIMESTAMP} = generateAuthInfo(APP_ID, API_SECRET_KEY);
-    // TODO: Add test to get all templates
-    t.equal(true, true);
+
+    const templateId = '-KGOE9QkmBfga6EYUQaL';
+    const expectedTemplate = templatesExpectedData.find(_t => _t.id === templateId);
+
+    superagent.get(templatesEndpoint)
+    .query({token: TOKEN, timestamp: TIMESTAMP})
+    .set('X-API-Appid', APP_ID)
+    .set('X-API-Key', API_SECRET_KEY)
+    .set('Accept', 'application/json')
+    .end(function (err, res){
+
+        if (err) {
+            console.log('Err in list templates success test: ', err);
+            t.fail(res.body.message);
+        }
+        const templates = res.body ? res.body : (res || {});
+        const template = templates.find(_t => _t.id === templateId);
+        t.equal(templates.length > 0, true, 'Should return an array of template objects');
+
+        testExpectedTemplate(t, template, expectedTemplate);
+
+    });
+
+    doBadRequestTests(t, 'GET', templatesEndpoint, {});
+
 });
 
 test('Get template info', (t) => {
 
-    t.plan(8);
-    const templateId = '-KR_Tor-2oEhEh8vJpAO';
-    const templateEndpoint = API_HOST + 'v1/templates/' + templateId;
+    t.plan(28);
+
     const {TOKEN, TIMESTAMP} = generateAuthInfo(APP_ID, API_SECRET_KEY);
 
-    const expectedTemplateInfo = {
-        name: 'Motion Glam Logo Reveal',
-        previewMedia: {
-            video: 'https://dpteq7m4zmhsm.cloudfront.net/-KR_Tor-2oEhEh8vJpAO/preview_media/preview_video.mp4',
-            image: 'https://dpteq7m4zmhsm.cloudfront.net/-KR_Tor-2oEhEh8vJpAO/preview_media/preview_image.jpg',
-            thumbnail: 'https://dpteq7m4zmhsm.cloudfront.net/-KR_Tor-2oEhEh8vJpAO/preview_media/preview_thumb.png'
-        },
-        inputConfig: {
-            scenes: [{
-                media: [''],
-                text: [''],
-                color: ['', '']
-            }],
-            audio: ''
-        }
-    };
+    const templateId = '-KGOE9QkmBfga6EYUQaL';
+    const templateEndpoint = API_HOST + 'v1/templates/' + templateId;
+    const expectedTemplate = templatesExpectedData.find(_t => _t.id === templateId);
 
     superagent.get(templateEndpoint)
+    .query({token: TOKEN, timestamp: TIMESTAMP})
     .set('X-API-Appid', APP_ID)
     .set('X-API-Key', API_SECRET_KEY)
     .set('Accept', 'application/json')
@@ -68,78 +127,104 @@ test('Get template info', (t) => {
             t.fail(res.body.message);
         }
 
-        const template = res.body ? res.body.data : (res || {});
-        const {templateInfo, inputConfig} = template;
-        const {scenes, audio} = inputConfig;
-        t.equal(templateInfo.name, expectedTemplateInfo.templateInfo.name, 'Should have name: ' + expectedTemplateInfo.templateInfo.name);
-        t.equal(templateInfo.previewMedia.video, expectedTemplateInfo.templateInfo.previewMedia.video, 'Should have preview video: ' + expectedTemplateInfo.templateInfo.previewMedia.video);
-        t.equal(templateInfo.previewMedia.image, expectedTemplateInfo.templateInfo.previewMedia.image, 'Should have preview image: ' + expectedTemplateInfo.templateInfo.previewMedia.image);
-        t.equal(templateInfo.previewMedia.thumbnail, expectedTemplateInfo.templateInfo.previewMedia.thumbnail, 'Should have preview thumbnail: ' + expectedTemplateInfo.templateInfo.previewMedia.thumbnail);
-        t.equal(scenes[0].media.length, 1, 'Should have 1 media placeholder');
-        t.equal(scenes[0].text.length, 1, 'Should have 1 text placeholder');
-        t.equal(scenes[0].color.length, 2, 'Should have 2 color placeholders');
-        t.equal(audio, '', 'Should have audio placeholder');
+        const template = res.body ? res.body : (res || {});
+        testExpectedTemplate(t, template, expectedTemplate);
     });
 
     doBadRequestTests(t, 'GET', templateEndpoint, {});
-
 });
 
-test('Create video', (t) => {
-
-    t.plan(9);
-    const createVideoEndpoint = API_HOST + 'v1/videos/create/';
-    const templateId = '-KR_Tor-2oEhEh8vJpAO';
-    const {TOKEN, TIMESTAMP} = generateAuthInfo(APP_ID, API_SECRET_KEY);
-
-    const videoInputData = {
-        scenes: [{
-            media: ['https://s3.amazonaws.com/re.bucket/images/re.logo.square.png'],
-            text: ['www.hotdog.com'],
-            color: ['#84C53D']
-        }],
-        audio: '',
-        TOKEN,
-        TIMESTAMP
-    };
-
-    superagent.post(`${createVideoEndpoint}${templateId}`)
-    .send(videoInputData)
-    .set('X-API-Appid', APP_ID)
-    .set('X-API-Key', API_SECRET_KEY)
-    .set('Accept', 'application/json')
-    .end(function (err, res){
-
-        if (err) {
-            console.log('Err in create video success test: ', err);
-            t.fail(res.body.message);
-        }
-
-        const body = res.body ? res.body.data : (res || {});
-        t.equal(typeof body.jobId === 'string' && body.jobId.length > 0, true, 'Create video Video Job Id exists and is a string');
-    });
-
-    doBadRequestTests(t, 'POST', `${createVideoEndpoint}${templateId}`, videoInputData);
-
-});
-
-test('Get video status', (t) => {
-    t.plan(1);
-    const videoStatusEndpoint = API_HOST + 'v1/videos/status/';
-    // TODO: Add test to get video job status
-});
-
-test('Test video is done webhook', (t) => {
-    t.plan(1);
-
-    // TODO: Add test to get video job
-});
+// TODO: Activate this test
+// test('Create video', (t) => {
+//
+//     t.plan(9);
+//     const createVideoEndpoint = API_HOST + 'v1/videos/create/';
+//     const templateId = '-KR_Tor-2oEhEh8vJpAO';
+//     const {TOKEN, TIMESTAMP} = generateAuthInfo(APP_ID, API_SECRET_KEY);
+//
+//     const videoInputData = {
+//         scenes: [{
+//             media: ['https://s3.amazonaws.com/re.bucket/images/re.logo.square.png'],
+//             text: ['www.hotdog.com'],
+//             color: ['#84C53D']
+//         }],
+//         audio: '',
+//         TOKEN,
+//         TIMESTAMP
+//     };
+//
+//     superagent.post(`${createVideoEndpoint}${templateId}`)
+//     .send(videoInputData)
+//     .set('X-API-Appid', APP_ID)
+//     .set('X-API-Key', API_SECRET_KEY)
+//     .set('Accept', 'application/json')
+//     .end(function (err, res){
+//
+//         if (err) {
+//             console.log('Err in create video success test: ', err);
+//             t.fail(res.body.message);
+//         }
+//
+//         const body = res.body ? res.body : (res || {});
+//         t.equal(typeof body.jobId === 'string' && body.jobId.length > 0, true, 'Create video Video Job Id exists and is a string');
+//     });
+//
+//     doBadRequestTests(t, 'POST', `${createVideoEndpoint}${templateId}`, videoInputData);
+//
+// });
+//
+// TODO: Activate this test
+// test('Get video status', (t) => {
+//     t.plan(1);
+//     const videoStatusEndpoint = API_HOST + 'v1/videos/status/';
+//     // TODO: Add test to get video job status
+// });
+//
+// TODO: activate this test
+// test('Test video is done webhook', (t) => {
+//     t.plan(1);
+//
+//     // TODO: Add test to get video job
+// });
 
 const methodMap = {
     POST: ['post', 'send'],
     GET: ['get', 'query']
 };
 
+function testExpectedTemplate(t, template, expectedTemplate) {
+    //20 tests
+    t.equal(template.id, expectedTemplate.id, 'Should have expected template id');
+    t.equal(template.name, expectedTemplate.name, 'Should have expected template name');
+    t.equal(template.seconds, expectedTemplate.seconds, 'Should have expected template seconds');
+    t.equal(template.mediaInputs, expectedTemplate.mediaInputs, 'Should have expected template mediaInputs');
+    t.equal(template.textInputs, expectedTemplate.textInputs, 'Should have expected template textInputs');
+    t.equal(template.colorInputs, expectedTemplate.colorInputs, 'Should have expected template colorInputs');
+    t.equal(template.previewMedia.video, expectedTemplate.previewMedia.video, 'Should have expected template preview media video');
+    t.equal(template.previewMedia.image, expectedTemplate.previewMedia.image, 'Should have expected template preview media image');
+    t.equal(template.previewMedia.thumbnail, expectedTemplate.previewMedia.thumbnail, 'Should have expected template preview media thumbnail');
+
+    const scenes = template.inputConfig.scenes;
+    const expectedScenes = expectedTemplate.inputConfig.scenes;
+    const color = scenes[0].color;
+    const expectedColor = expectedScenes[0].color;
+    const media = scenes[0].media;
+    const expectedMedia = expectedScenes[0].media;
+    const text = scenes[0].text;
+    const expectedText = expectedScenes[0].text;
+
+    t.equal(scenes.length, expectedScenes.length, 'Should have expected template scenes length');
+    t.equal(color.length, expectedColor.length, 'Should have expected template scene color length');
+    t.equal(color[0].r, expectedColor[0].r, 'Should have expected scene color red value');
+    t.equal(color[0].g, expectedColor[0].g, 'Should have expected scene color green value');
+    t.equal(color[0].b, expectedColor[0].b, 'Should have expected scene color blue value');
+    t.equal(color[0].label, expectedColor[0].label, 'Should have expected scene color label');
+    t.equal(media.length, expectedMedia.length, 'Should have expected template scene media length');
+    t.equal(media[0], '', 'Should have expected template scene media empty string');
+    t.equal(text.length, expectedText.length, 'Should have expected template scene text length');
+    //t.equal(text[0], '', 'Should have expected template scene text empty string');
+    t.equal(template.inputConfig.audio, '', 'Should have empty string for audio placeholder');
+}
 function doBadRequestTests(t, method, endpoint, data) {
     // 8 tests
 
@@ -168,7 +253,7 @@ function doBadRequestTests(t, method, endpoint, data) {
     const dataBadToken = Object.assign({}, data, {TOKEN: 'not a good token'});
 
     superagent[methodMap[method][0]](endpoint)
-    [methodMap[method][1]](data)
+    [methodMap[method][1]](dataBadToken)
     .set('X-API-Appid', APP_ID)
     .set('X-API-Key', API_SECRET_KEY)
     .set('Accept', 'application/json')
@@ -184,7 +269,7 @@ function doBadRequestTests(t, method, endpoint, data) {
     const dataTokenExpired = Object.assign({}, data, {TOKEN: badAuthData.token});
 
     superagent[methodMap[method][0]](endpoint)
-    [methodMap[method][1]](data)
+    [methodMap[method][1]](dataTokenExpired)
     .set('X-API-Appid', APP_ID)
     .set('X-API-Key', API_SECRET_KEY)
     .set('Accept', 'application/json')
