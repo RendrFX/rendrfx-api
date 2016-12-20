@@ -136,9 +136,12 @@ $ curl https://api/rendrfx.com/v1/videos/create \
          "text":[
             "www.websiteurl.com"
          ],
-         "color":[
-            "#84C53D"
-         ]
+         "color":[{
+             "r":40,
+             "g":109,
+             "b":73,
+             "label":"text"
+         }]
       }
    ],
    "audio":"www.url.com/to/audio/file.mp3",
@@ -190,7 +193,7 @@ A template object contains the following fields.
 | textInputs | integer | The number of available customizable text inputs in this template |
 | colorInputs | integer | The number of available customizable color inputs in this template |
 | previewMedia | object | The preview media assets for the template. Includes video, image and thumbnail |
-| inputConfig | object | A list of scene objects. **_The order of the scenes list directly corresponds with the scene number, which important to keep in tact_**|
+| inputConfig | object | An object containing a list of scene objects as well as the audio placeholder param. **_The order of the scenes list directly corresponds with the scene number, which important to keep in tact_**|
 
 **Example template object json**
 
@@ -247,8 +250,13 @@ A scene object contains the following fields.
 | text | list | A list of empty strings to be customized with text to be sent via the create video endpoint. **The order of the text list directly corresponds to the number of the placeholder. So text[0] is the equivalent to text placeholder 1** |
 | color | list | A list of RGB color objects to be customized with color and sent via the create video endpoint. Note that default colors are already pre-filled. **The order of the color list directly corresponds to the number of the placeholder. So color[0] is the equivalent to color placeholder 1** |
 
+The scenes object along with the sound field should be customized and sent to the create video endpoint. Here
+
+
 ### Video Status Object
-A scene object contains the following fields.
+A video status object contains the following fields.
 
 | Attribute | Type | Description |
 | --- | --- | --- |
+| label | string | The label of the status. `build`, `render`, etc |
+| progress | int | The percent of video job progress done from 0-100
