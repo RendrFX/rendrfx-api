@@ -159,7 +159,7 @@ $ curl https://api.rendrfx.com/v1/videos/create \
 ```
 
 ### Returns
-A job unique identifier in string format. An example job id would look like this `-KR3g3BhjmS00k3vMmJC`.
+A job object.  An example job object would look like this `{jobId: -KR3g3BhjmS00k3vMmJC}`.
 
 ## View status of a video
 Each video job will have it's own status URL -
