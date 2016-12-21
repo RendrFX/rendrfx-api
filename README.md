@@ -44,6 +44,17 @@ const token = hmac.digest('hex'); //Encode using hex encoding
 const timestamp = unixTimeInMilliseconds;
 ```
 
+**Bad request response messages**
+
+This table shows a list of common responses you will receive when a request fails due to a bad token, timestamp or app id.
+
+| Message | Response Code | Description |
+| ------- | ------------- | ----------- |
+| Token has expired | 406 | The generated token has expired. Time to live is 3 minutes. |
+| Timestamp is invalid | 406 | The timestamp is a bad format or the timestamp received has a time that exceeds our endpoint's server time.|
+| Invalid token | 406 | The token has not been properly constructed, meaning one of the values of `timestamp`, `apiSecretKey` & `appId` is incorrect. |
+| Invalid APP ID | 403 | The app id does not exist. |
+
 # Templates
 The templates resource allows you to get information about the templates that are available to your account. Templates can be viewed individually or as a list.
 
@@ -65,7 +76,6 @@ You can fetch a list of available templates.
 $ curl \
 -s https://api.rendrfx.com/v1/templates?token=c54c41281c45bfb2d7b86b56ff89961290b406f66cec6431dccce859a4a8522f&timestamp=1482246580660 \
 -H 'X-API-Appid: yourAppId' \
--H 'X-API-Key: yourSecretKey' \
 -H 'Accept:application/json'
 ```
 
@@ -94,7 +104,6 @@ Where `:template_id` is the value of the template's id field. This URL is the te
 $ curl \
 -s https://api.rendrfx.com/v1/templates/-KR_Tor-2oEhEh8vJpAO?token=c54c41281c45bfb2d7b86b56ff89961290b406f66cec6431dccce859a4a8522f&timestamp=1482246580660 \
 -H 'X-API-Appid: yourAppId' \
--H 'X-API-Key: yourSecretKey' \
 -H 'Accept:application/json'
 ```
 
@@ -107,7 +116,7 @@ The videos resource allows you to create video jobs and get information the stat
 
 
 ## Create a video
-Videos can be created via a `POST` method to `https://api/rendrfx.com/v1/videos/create`
+Videos can be created via a `POST` method to `https://api.rendrfx.com/v1/videos/create`
 
 **Attributes**
 The table below shows the fields you can add to create a video
@@ -121,10 +130,9 @@ The table below shows the fields you can add to create a video
 
 **Example create video request**
 ```shell
-$ curl https://api/rendrfx.com/v1/videos/create \
+$ curl https://api.rendrfx.com/v1/videos/create \
 -X POST \
 -H 'X-API-Appid: yourAppId' \
--H 'X-API-Key: yourSecretKey' \
 -H 'Accept:application/json' \
 -H 'Content-Type: application/json' -d '
 {
@@ -174,7 +182,6 @@ Where `:job_id` is the value of the video job id returned by the create video en
 $ curl \
 -s https://api.rendrfx.com/v1/videos/status/-KR3g3BhjmS00k3vMmJC?token=c54c41281c45bfb2d7b86b56ff89961290b406f66cec6431dccce859a4a8522f&timestamp=1482246580660 \
 -H 'X-API-Appid: yourAppId' \
--H 'X-API-Key: yourSecretKey' \
 -H 'Accept:application/json'
 ```
 ### Returns

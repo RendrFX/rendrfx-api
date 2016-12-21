@@ -23,6 +23,7 @@ function generateAuthInfo(appId, apiSecretKey, manualDateInMilliseconds) {
 }
 
 doTryExitProcess();
+console.log('==========================Starting RendrFX REST API Tests==========================');
 
 const templatesExpectedData = [{
     colorInputs: 2,
@@ -101,38 +102,38 @@ test('List available templates', (t) => {
 
     });
 
-    doBadRequestTests(t, 'GET', templatesEndpoint, {});
+    doBadRequestTests(t, 'GET', templatesEndpoint, {token: TOKEN, timestamp: TIMESTAMP});
 
 });
 
-test('Get template info', (t) => {
-
-    t.plan(28);
-
-    const {TOKEN, TIMESTAMP} = generateAuthInfo(APP_ID, API_SECRET_KEY);
-
-    const templateId = '-KGOE9QkmBfga6EYUQaL';
-    const templateEndpoint = API_HOST + 'v1/templates/' + templateId;
-    const expectedTemplate = templatesExpectedData.find(_t => _t.id === templateId);
-
-    superagent.get(templateEndpoint)
-    .query({token: TOKEN, timestamp: TIMESTAMP})
-    .set('X-API-Appid', APP_ID)
-    .set('X-API-Key', API_SECRET_KEY)
-    .set('Accept', 'application/json')
-    .end(function (err, res){
-
-        if (err) {
-            console.log('Err in get template info success test: ', err);
-            t.fail(res.body.message);
-        }
-
-        const template = res.body ? res.body : (res || {});
-        testExpectedTemplate(t, template, expectedTemplate);
-    });
-
-    doBadRequestTests(t, 'GET', templateEndpoint, {});
-});
+// test('Get template info', (t) => {
+//
+//     t.plan(28);
+//
+//     const {TOKEN, TIMESTAMP} = generateAuthInfo(APP_ID, API_SECRET_KEY);
+//
+//     const templateId = '-KGOE9QkmBfga6EYUQaL';
+//     const templateEndpoint = API_HOST + 'v1/templates/' + templateId;
+//     const expectedTemplate = templatesExpectedData.find(_t => _t.id === templateId);
+//
+//     superagent.get(templateEndpoint)
+//     .query({token: TOKEN, timestamp: TIMESTAMP})
+//     .set('X-API-Appid', APP_ID)
+//     .set('X-API-Key', API_SECRET_KEY)
+//     .set('Accept', 'application/json')
+//     .end(function (err, res){
+//
+//         if (err) {
+//             console.log('Err in get template info success test: ', err);
+//             t.fail(res.body.message);
+//         }
+//
+//         const template = res.body ? res.body : (res || {});
+//         testExpectedTemplate(t, template, expectedTemplate);
+//     });
+//
+//     doBadRequestTests(t, 'GET', templateEndpoint, {});
+// });
 
 // TODO: Activate this test
 // test('Create video', (t) => {
@@ -149,8 +150,8 @@ test('Get template info', (t) => {
 //             color: ['#84C53D']
 //         }],
 //         audio: '',
-//         TOKEN,
-//         TIMESTAMP
+//         token: TOKEN,
+//         timestamp: TIMESTAMP
 //     };
 //
 //     superagent.post(`${createVideoEndpoint}${templateId}`)
@@ -187,10 +188,7 @@ test('Get template info', (t) => {
 //     // TODO: Add test to get video job
 // });
 
-const methodMap = {
-    POST: ['post', 'send'],
-    GET: ['get', 'query']
-};
+
 
 function testExpectedTemplate(t, template, expectedTemplate) {
     //20 tests
@@ -225,58 +223,76 @@ function testExpectedTemplate(t, template, expectedTemplate) {
     //t.equal(text[0], '', 'Should have expected template scene text empty string');
     t.equal(template.inputConfig.audio, '', 'Should have empty string for audio placeholder');
 }
+
+const methodMap = {
+    POST: ['post', 'send'],
+    GET: ['get', 'query']
+};
+
 function doBadRequestTests(t, method, endpoint, data) {
     // 8 tests
 
     superagent[methodMap[method][0]](endpoint)
     [methodMap[method][1]](data)
     .set('X-API-Appid', 'bad_app_id')
-    .set('X-API-Key', API_SECRET_KEY)
     .set('Accept', 'application/json')
     .end(function (err, res){
 
         t.equal(err.status, 403, 'Should be a 403 given a bad app id');
-        t.equal(res.body.message, 'Authentication headers missing');
+        t.equal(res.body.message, 'Invalid APP ID', 'Should have "Invalid APP ID" message');
     });
 
-    superagent[methodMap[method][0]](endpoint)
-    [methodMap[method][1]](data)
-    .set('X-API-Appid', APP_ID)
-    .set('X-API-Key', 'bad_secret_key')
-    .set('Accept', 'application/json')
-    .end(function (err, res){
+    // superagent[methodMap[method][0]](endpoint)
+    // [methodMap[method][1]](data)
+    // .set('X-API-Appid', APP_ID)
+    // .set('X-API-Key', 'bad_secret_key')
+    // .set('Accept', 'application/json')
+    // .end(function (err, res){
+    //
+    //     t.equal(err.status, 403, 'Should be a 403 given a bad app secret key');
+    //     t.equal(res.body.message, 'Invalid API KEY', 'Should have "Invalid API KEY" message');
+    // });
 
-        t.equal(err.status, 407, 'Should be a 407 given a bad app secret key');
-        t.equal(res.body.message, 'Authentication headers missing');
-    });
-
-    const dataBadToken = Object.assign({}, data, {TOKEN: 'not a good token'});
+    const dataBadToken = Object.assign({}, data, {token: 'not a good token'});
 
     superagent[methodMap[method][0]](endpoint)
     [methodMap[method][1]](dataBadToken)
     .set('X-API-Appid', APP_ID)
-    .set('X-API-Key', API_SECRET_KEY)
     .set('Accept', 'application/json')
     .end(function (err, res){
 
         t.equal(err.status, 406, 'Should be a 406 given a bad token');
-        t.equal(res.body.message, 'Invalid token');
+        t.equal(res.body.message, 'Invalid token', 'Should have "Invalid token" message');
     });
 
     const expiredDate = new Date();
-    expiredDate.setTime(expiredDate.getTime() - (4 * 60 * 60 * 1000)); //set three hours behind
+    expiredDate.setTime(expiredDate.getTime() - (3 * 60 * 60 * 1000)); //set three hours behind
     const badAuthData = generateAuthInfo(APP_ID, API_SECRET_KEY, expiredDate.getTime());
-    const dataTokenExpired = Object.assign({}, data, {TOKEN: badAuthData.token});
+    const dataTokenExpired = Object.assign({}, data, {token: badAuthData.TOKEN, timestamp: badAuthData.TIMESTAMP});
 
     superagent[methodMap[method][0]](endpoint)
     [methodMap[method][1]](dataTokenExpired)
     .set('X-API-Appid', APP_ID)
-    .set('X-API-Key', API_SECRET_KEY)
     .set('Accept', 'application/json')
     .end(function (err, res){
 
         t.equal(err.status, 406, 'Should be a 406 given a expired token');
-        t.equal(res.body.message, 'Token has expired');
+        t.equal(res.body.message, 'Token has expired', 'Should have "Token has expired" message');
+    });
+
+    const futureDate = new Date();
+    futureDate.setTime(futureDate.getTime() + (4 * 60 * 1000)); //set four minutes ahead
+    const futureAuthData = generateAuthInfo(APP_ID, API_SECRET_KEY, futureDate.getTime());
+    const futureTokenData = Object.assign({}, data, {token: futureAuthData.TOKEN, timestamp: futureAuthData.TIMESTAMP});
+
+    superagent[methodMap[method][0]](endpoint)
+    [methodMap[method][1]](futureTokenData)
+    .set('X-API-Appid', APP_ID)
+    .set('Accept', 'application/json')
+    .end(function (err, res){
+
+        t.equal(err.status, 406, 'Should be a 406 given a token from the future');
+        t.equal(res.body.message, 'Timestamp is invalid', 'Should have "Timestamp is invalid" message given a future token');
     });
 }
 
