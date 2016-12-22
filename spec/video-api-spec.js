@@ -106,34 +106,34 @@ test('List available templates', (t) => {
 
 });
 
-// test('Get template info', (t) => {
-//
-//     t.plan(28);
-//
-//     const {TOKEN, TIMESTAMP} = generateAuthInfo(APP_ID, API_SECRET_KEY);
-//
-//     const templateId = '-KGOE9QkmBfga6EYUQaL';
-//     const templateEndpoint = API_HOST + 'v1/templates/' + templateId;
-//     const expectedTemplate = templatesExpectedData.find(_t => _t.id === templateId);
-//
-//     superagent.get(templateEndpoint)
-//     .query({token: TOKEN, timestamp: TIMESTAMP})
-//     .set('X-API-Appid', APP_ID)
-//     .set('X-API-Key', API_SECRET_KEY)
-//     .set('Accept', 'application/json')
-//     .end(function (err, res){
-//
-//         if (err) {
-//             console.log('Err in get template info success test: ', err);
-//             t.fail(res.body.message);
-//         }
-//
-//         const template = res.body ? res.body : (res || {});
-//         testExpectedTemplate(t, template, expectedTemplate);
-//     });
-//
-//     doBadRequestTests(t, 'GET', templateEndpoint, {});
-// });
+test('Get template info', (t) => {
+
+    t.plan(28);
+
+    const {TOKEN, TIMESTAMP} = generateAuthInfo(APP_ID, API_SECRET_KEY);
+
+    const templateId = '-KGOE9QkmBfga6EYUQaL';
+    const templateEndpoint = API_HOST + 'v1/templates/' + templateId;
+    const expectedTemplate = templatesExpectedData.find(_t => _t.id === templateId);
+
+    superagent.get(templateEndpoint)
+    .query({token: TOKEN, timestamp: TIMESTAMP})
+    .set('X-API-Appid', APP_ID)
+    .set('X-API-Key', API_SECRET_KEY)
+    .set('Accept', 'application/json')
+    .end(function (err, res){
+
+        if (err) {
+            console.log('Err in get template info success test: ', err);
+            t.fail(res.body.message);
+        }
+
+        const template = res.body ? res.body : (res || {});
+        testExpectedTemplate(t, template, expectedTemplate);
+    });
+
+    doBadRequestTests(t, 'GET', templateEndpoint, {});
+});
 
 // TODO: Activate this test
 // test('Create video', (t) => {
