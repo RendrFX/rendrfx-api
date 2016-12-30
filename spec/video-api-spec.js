@@ -108,7 +108,7 @@ test('List available templates', (t) => {
 
 test('Get template info', (t) => {
 
-    t.plan(28);
+    t.plan(27);
 
     const {TOKEN, TIMESTAMP} = generateAuthInfo(APP_ID, API_SECRET_KEY);
 
@@ -132,7 +132,7 @@ test('Get template info', (t) => {
         testExpectedTemplate(t, template, expectedTemplate);
     });
 
-    doBadRequestTests(t, 'GET', templateEndpoint, {});
+    doBadRequestTests(t, 'GET', templateEndpoint, {token: TOKEN, timestamp: TIMESTAMP});
 });
 
 // TODO: Activate this test
