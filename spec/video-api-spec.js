@@ -136,44 +136,44 @@ test('Get template info', (t) => {
     doBadRequestTests(t, 'GET', templateEndpoint, {token: TOKEN, timestamp: TIMESTAMP});
 });
 
-TODO: Activate this test
-test('Create video', (t) => {
-
-    t.plan(9);
-    const createVideoEndpoint = API_HOST + 'v1/videos/create/';
-    const templateId = '-KR_Tor-2oEhEh8vJpAO';
-    const {TOKEN, TIMESTAMP} = generateAuthInfo(APP_ID, API_SECRET_KEY);
-
-    const videoInputData = {
-        scenes: [{
-            media: ['https://s3.amazonaws.com/re.bucket/images/re.logo.square.png'],
-            text: ['www.hotdog.com'],
-            color: ['#84C53D']
-        }],
-        audio: '',
-        token: TOKEN,
-        timestamp: TIMESTAMP
-    };
-
-    superagent.post(`${createVideoEndpoint}${templateId}`)
-    .send(videoInputData)
-    .set('X-API-Appid', APP_ID)
-    .set('X-API-Key', API_SECRET_KEY)
-    .set('Accept', 'application/json')
-    .end(function (err, res){
-
-        if (err) {
-            console.log('Err in create video success test: ', err);
-            t.fail(res.body.message);
-        }
-
-        const body = res.body ? res.body : (res || {});
-        t.equal(typeof body.jobId === 'string' && body.jobId.length > 0, true, 'Create video Video Job Id exists and is a string');
-    });
-
-    doBadRequestTests(t, 'POST', `${createVideoEndpoint}${templateId}`, videoInputData);
-
-});
+// // TODO: Activate this test
+// test('Create video', (t) => {
+//
+//     t.plan(9);
+//     const createVideoEndpoint = API_HOST + 'v1/videos/create/';
+//     const templateId = '-KR_Tor-2oEhEh8vJpAO';
+//     const {TOKEN, TIMESTAMP} = generateAuthInfo(APP_ID, API_SECRET_KEY);
+//
+//     const videoInputData = {
+//         scenes: [{
+//             media: ['https://s3.amazonaws.com/re.bucket/images/re.logo.square.png'],
+//             text: ['www.hotdog.com'],
+//             color: ['#84C53D']
+//         }],
+//         audio: '',
+//         token: TOKEN,
+//         timestamp: TIMESTAMP
+//     };
+//
+//     superagent.post(`${createVideoEndpoint}${templateId}`)
+//     .send(videoInputData)
+//     .set('X-API-Appid', APP_ID)
+//     .set('X-API-Key', API_SECRET_KEY)
+//     .set('Accept', 'application/json')
+//     .end(function (err, res){
+//
+//         if (err) {
+//             console.log('Err in create video success test: ', err);
+//             t.fail(res.body.message);
+//         }
+//
+//         const body = res.body ? res.body : (res || {});
+//         t.equal(typeof body.jobId === 'string' && body.jobId.length > 0, true, 'Create video Video Job Id exists and is a string');
+//     });
+//
+//     doBadRequestTests(t, 'POST', `${createVideoEndpoint}${templateId}`, videoInputData);
+//
+// });
 
 
 /*
