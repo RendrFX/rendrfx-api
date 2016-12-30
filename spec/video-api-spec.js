@@ -6,7 +6,8 @@ import crypto from 'crypto';
 const {
     APP_ID,
     API_SECRET_KEY,
-    API_HOST = 'https://api.rendrfx.com/'
+    API_HOST = 'https://api.rendrfx.com/',
+    VIDEO_JOB_ID = 'test'
 } = process.env;
 
 function generateAuthInfo(appId, apiSecretKey, manualDateInMilliseconds) {
@@ -74,66 +75,66 @@ const templatesExpectedData = [{
     }
 }];
 
-test('List available templates', (t) => {
-
-    t.plan(28);
-    const templatesEndpoint = API_HOST + 'v1/templates';
-    const {TOKEN, TIMESTAMP} = generateAuthInfo(APP_ID, API_SECRET_KEY);
-
-    const templateId = '-KGOE9QkmBfga6EYUQaL';
-    const expectedTemplate = templatesExpectedData.find(_t => _t.id === templateId);
-
-    superagent.get(templatesEndpoint)
-    .query({token: TOKEN, timestamp: TIMESTAMP})
-    .set('X-API-Appid', APP_ID)
-    .set('X-API-Key', API_SECRET_KEY)
-    .set('Accept', 'application/json')
-    .end(function (err, res){
-
-        if (err) {
-            console.log('Err in list templates success test: ', err);
-            t.fail(res.body.message);
-        }
-        const templates = res.body ? res.body : (res || {});
-        const template = templates.find(_t => _t.id === templateId);
-        t.equal(templates.length > 0, true, 'Should return an array of template objects');
-
-        testExpectedTemplate(t, template, expectedTemplate);
-
-    });
-
-    doBadRequestTests(t, 'GET', templatesEndpoint, {token: TOKEN, timestamp: TIMESTAMP});
-
-});
-
-test('Get template info', (t) => {
-
-    t.plan(27);
-
-    const {TOKEN, TIMESTAMP} = generateAuthInfo(APP_ID, API_SECRET_KEY);
-
-    const templateId = '-KGOE9QkmBfga6EYUQaL';
-    const templateEndpoint = API_HOST + 'v1/templates/' + templateId;
-    const expectedTemplate = templatesExpectedData.find(_t => _t.id === templateId);
-
-    superagent.get(templateEndpoint)
-    .query({token: TOKEN, timestamp: TIMESTAMP})
-    .set('X-API-Appid', APP_ID)
-    .set('X-API-Key', API_SECRET_KEY)
-    .set('Accept', 'application/json')
-    .end(function (err, res){
-
-        if (err) {
-            console.log('Err in get template info success test: ', err);
-            t.fail(res.body.message);
-        }
-
-        const template = res.body ? res.body : (res || {});
-        testExpectedTemplate(t, template, expectedTemplate);
-    });
-
-    doBadRequestTests(t, 'GET', templateEndpoint, {token: TOKEN, timestamp: TIMESTAMP});
-});
+// test('List available templates', (t) => {
+//
+//     t.plan(28);
+//     const templatesEndpoint = API_HOST + 'v1/templates';
+//     const {TOKEN, TIMESTAMP} = generateAuthInfo(APP_ID, API_SECRET_KEY);
+//
+//     const templateId = '-KGOE9QkmBfga6EYUQaL';
+//     const expectedTemplate = templatesExpectedData.find(_t => _t.id === templateId);
+//
+//     superagent.get(templatesEndpoint)
+//     .query({token: TOKEN, timestamp: TIMESTAMP})
+//     .set('X-API-Appid', APP_ID)
+//     .set('X-API-Key', API_SECRET_KEY)
+//     .set('Accept', 'application/json')
+//     .end(function (err, res){
+//
+//         if (err) {
+//             console.log('Err in list templates success test: ', err);
+//             t.fail(res.body.message);
+//         }
+//         const templates = res.body ? res.body : (res || {});
+//         const template = templates.find(_t => _t.id === templateId);
+//         t.equal(templates.length > 0, true, 'Should return an array of template objects');
+//
+//         testExpectedTemplate(t, template, expectedTemplate);
+//
+//     });
+//
+//     doBadRequestTests(t, 'GET', templatesEndpoint, {token: TOKEN, timestamp: TIMESTAMP});
+//
+// });
+//
+// test('Get template info', (t) => {
+//
+//     t.plan(27);
+//
+//     const {TOKEN, TIMESTAMP} = generateAuthInfo(APP_ID, API_SECRET_KEY);
+//
+//     const templateId = '-KGOE9QkmBfga6EYUQaL';
+//     const templateEndpoint = API_HOST + 'v1/templates/' + templateId;
+//     const expectedTemplate = templatesExpectedData.find(_t => _t.id === templateId);
+//
+//     superagent.get(templateEndpoint)
+//     .query({token: TOKEN, timestamp: TIMESTAMP})
+//     .set('X-API-Appid', APP_ID)
+//     .set('X-API-Key', API_SECRET_KEY)
+//     .set('Accept', 'application/json')
+//     .end(function (err, res){
+//
+//         if (err) {
+//             console.log('Err in get template info success test: ', err);
+//             t.fail(res.body.message);
+//         }
+//
+//         const template = res.body ? res.body : (res || {});
+//         testExpectedTemplate(t, template, expectedTemplate);
+//     });
+//
+//     doBadRequestTests(t, 'GET', templateEndpoint, {token: TOKEN, timestamp: TIMESTAMP});
+// });
 
 // TODO: Activate this test
 // test('Create video', (t) => {
@@ -174,21 +175,117 @@ test('Get template info', (t) => {
 //
 // });
 //
-// TODO: Activate this test
-// test('Get video status', (t) => {
-//     t.plan(1);
-//     const videoStatusEndpoint = API_HOST + 'v1/videos/status/';
-//     // TODO: Add test to get video job status
-// });
-//
+
+/*
+ * Video progress process
+ *
+ *  D: determinate
+ *  I: indeterminate
+ *  number: progress step
+ *
+ * --Status order for Templates:
+ *          I         I        D          D           I
+ *      |staging|  |build|  |render|  |compile|  |processing|
+ *      |   1   |  |  2  |  |  3   |  |   4   |  |    5     |
+ *
+ */
+
+test('Get video status', (t) => {
+
+    t.plan(10);
+    const videoStatusEndpoint = API_HOST + 'v1/videos/status/' + VIDEO_JOB_ID;
+    const {TOKEN, TIMESTAMP} = generateAuthInfo(APP_ID, API_SECRET_KEY);
+    const possibleProgress = {
+        staging: {
+            type: 'indeterminate',
+            status: 'staging',
+            val: 0
+        },
+        build: {
+            type: 'indeterminate',
+            status: 'build',
+            val: 9
+        },
+        render: {
+            type: 'determinate',
+            status: 'render',
+            min: 10,
+            max: 49
+        },
+        compile: {
+            type: 'determinate',
+            status: 'compile',
+            min: 50,
+            max: 89
+        },
+        processing: {
+            type: 'indeterminate',
+            status: 'processing',
+            val: 90
+        },
+        done: {
+            type: 'indeterminate',
+            status: 'done',
+            val: 100
+        }
+    };
+
+    superagent.get(videoStatusEndpoint)
+    .query({token: TOKEN, timestamp: TIMESTAMP})
+    .set('X-API-Appid', APP_ID)
+    .set('X-API-Key', API_SECRET_KEY)
+    .set('Accept', 'application/json')
+    .end(function (err, res){
+
+        if (err) {
+            console.log('Err in get video status test: ', err);
+            t.fail(res.body.message);
+        }
+
+        const videoStatus = res.body ? res.body : (res || {});
+        t.equal(videoStatus.status, possibleProgress[videoStatus.status].status, 'Video status should be the same: ' + possibleProgress[videoStatus.status].status);
+
+        if (videoStatus.status === possibleProgress.staging.status) {
+
+            t.equal(videoStatus.progress, possibleProgress[videoStatus.status].val, 'Should be 0 percent progress if staging');
+        } else if (videoStatus.status === possibleProgress.build.status) {
+
+            t.equal(videoStatus.progress, possibleProgress[videoStatus.status].val, 'Should be 9 percent progress if build');
+        } else if (videoStatus.status === possibleProgress.render.status) {
+
+            t.equal(
+                (videoStatus.progress >= possibleProgress[videoStatus.status].min && videoStatus.progress <= possibleProgress[videoStatus.status].max),
+                true,
+                'Should be between 10-49 percent progress if render'
+            );
+        } else if (videoStatus.status === possibleProgress.compile.status) {
+
+            t.equal(
+                (videoStatus.progress >= possibleProgress[videoStatus.status].min && videoStatus.progress <= possibleProgress[videoStatus.status].max),
+                true,
+                'Should be between 50-89 percent progress if compile'
+            );
+        } else if (videoStatus.status === possibleProgress.processing.status) {
+
+            t.equal(videoStatus.progress, possibleProgress[videoStatus.status].val, 'Should be 91 percent progress if processing');
+        } else if (videoStatus.status === possibleProgress.done.status) {
+
+            t.equal(videoStatus.progress, possibleProgress[videoStatus.status].val, 'Should be 100 percent progress if done');
+            t.equal(videoStatus.downloadUrl.length > 0, true, 'Should have downloadUrl');
+            // TODO: download the file and run file stat against to make sure file exists
+        }
+    });
+
+    doBadRequestTests(t, 'GET', videoStatusEndpoint, {token: TOKEN, timestamp: TIMESTAMP});
+
+});
+
 // TODO: activate this test
 // test('Test video is done webhook', (t) => {
 //     t.plan(1);
 //
 //     // TODO: Add test to get video job
 // });
-
-
 
 function testExpectedTemplate(t, template, expectedTemplate) {
     //20 tests
