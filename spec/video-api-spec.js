@@ -75,106 +75,106 @@ const templatesExpectedData = [{
     }
 }];
 
-// test('List available templates', (t) => {
-//
-//     t.plan(28);
-//     const templatesEndpoint = API_HOST + 'v1/templates';
-//     const {TOKEN, TIMESTAMP} = generateAuthInfo(APP_ID, API_SECRET_KEY);
-//
-//     const templateId = '-KGOE9QkmBfga6EYUQaL';
-//     const expectedTemplate = templatesExpectedData.find(_t => _t.id === templateId);
-//
-//     superagent.get(templatesEndpoint)
-//     .query({token: TOKEN, timestamp: TIMESTAMP})
-//     .set('X-API-Appid', APP_ID)
-//     .set('X-API-Key', API_SECRET_KEY)
-//     .set('Accept', 'application/json')
-//     .end(function (err, res){
-//
-//         if (err) {
-//             console.log('Err in list templates success test: ', err);
-//             t.fail(res.body.message);
-//         }
-//         const templates = res.body ? res.body : (res || {});
-//         const template = templates.find(_t => _t.id === templateId);
-//         t.equal(templates.length > 0, true, 'Should return an array of template objects');
-//
-//         testExpectedTemplate(t, template, expectedTemplate);
-//
-//     });
-//
-//     doBadRequestTests(t, 'GET', templatesEndpoint, {token: TOKEN, timestamp: TIMESTAMP});
-//
-// });
-//
-// test('Get template info', (t) => {
-//
-//     t.plan(27);
-//
-//     const {TOKEN, TIMESTAMP} = generateAuthInfo(APP_ID, API_SECRET_KEY);
-//
-//     const templateId = '-KGOE9QkmBfga6EYUQaL';
-//     const templateEndpoint = API_HOST + 'v1/templates/' + templateId;
-//     const expectedTemplate = templatesExpectedData.find(_t => _t.id === templateId);
-//
-//     superagent.get(templateEndpoint)
-//     .query({token: TOKEN, timestamp: TIMESTAMP})
-//     .set('X-API-Appid', APP_ID)
-//     .set('X-API-Key', API_SECRET_KEY)
-//     .set('Accept', 'application/json')
-//     .end(function (err, res){
-//
-//         if (err) {
-//             console.log('Err in get template info success test: ', err);
-//             t.fail(res.body.message);
-//         }
-//
-//         const template = res.body ? res.body : (res || {});
-//         testExpectedTemplate(t, template, expectedTemplate);
-//     });
-//
-//     doBadRequestTests(t, 'GET', templateEndpoint, {token: TOKEN, timestamp: TIMESTAMP});
-// });
+test('List available templates', (t) => {
 
-// TODO: Activate this test
-// test('Create video', (t) => {
-//
-//     t.plan(9);
-//     const createVideoEndpoint = API_HOST + 'v1/videos/create/';
-//     const templateId = '-KR_Tor-2oEhEh8vJpAO';
-//     const {TOKEN, TIMESTAMP} = generateAuthInfo(APP_ID, API_SECRET_KEY);
-//
-//     const videoInputData = {
-//         scenes: [{
-//             media: ['https://s3.amazonaws.com/re.bucket/images/re.logo.square.png'],
-//             text: ['www.hotdog.com'],
-//             color: ['#84C53D']
-//         }],
-//         audio: '',
-//         token: TOKEN,
-//         timestamp: TIMESTAMP
-//     };
-//
-//     superagent.post(`${createVideoEndpoint}${templateId}`)
-//     .send(videoInputData)
-//     .set('X-API-Appid', APP_ID)
-//     .set('X-API-Key', API_SECRET_KEY)
-//     .set('Accept', 'application/json')
-//     .end(function (err, res){
-//
-//         if (err) {
-//             console.log('Err in create video success test: ', err);
-//             t.fail(res.body.message);
-//         }
-//
-//         const body = res.body ? res.body : (res || {});
-//         t.equal(typeof body.jobId === 'string' && body.jobId.length > 0, true, 'Create video Video Job Id exists and is a string');
-//     });
-//
-//     doBadRequestTests(t, 'POST', `${createVideoEndpoint}${templateId}`, videoInputData);
-//
-// });
-//
+    t.plan(28);
+    const templatesEndpoint = API_HOST + 'v1/templates';
+    const {TOKEN, TIMESTAMP} = generateAuthInfo(APP_ID, API_SECRET_KEY);
+
+    const templateId = '-KGOE9QkmBfga6EYUQaL';
+    const expectedTemplate = templatesExpectedData.find(_t => _t.id === templateId);
+
+    superagent.get(templatesEndpoint)
+    .query({token: TOKEN, timestamp: TIMESTAMP})
+    .set('X-API-Appid', APP_ID)
+    .set('X-API-Key', API_SECRET_KEY)
+    .set('Accept', 'application/json')
+    .end(function (err, res){
+
+        if (err) {
+            console.log('Err in list templates success test: ', err);
+            t.fail(res.body.message);
+        }
+        const templates = res.body ? res.body : (res || {});
+        const template = templates.find(_t => _t.id === templateId);
+        t.equal(templates.length > 0, true, 'Should return an array of template objects');
+
+        testExpectedTemplate(t, template, expectedTemplate);
+
+    });
+
+    doBadRequestTests(t, 'GET', templatesEndpoint, {token: TOKEN, timestamp: TIMESTAMP});
+
+});
+
+test('Get template info', (t) => {
+
+    t.plan(27);
+
+    const {TOKEN, TIMESTAMP} = generateAuthInfo(APP_ID, API_SECRET_KEY);
+
+    const templateId = '-KGOE9QkmBfga6EYUQaL';
+    const templateEndpoint = API_HOST + 'v1/templates/' + templateId;
+    const expectedTemplate = templatesExpectedData.find(_t => _t.id === templateId);
+
+    superagent.get(templateEndpoint)
+    .query({token: TOKEN, timestamp: TIMESTAMP})
+    .set('X-API-Appid', APP_ID)
+    .set('X-API-Key', API_SECRET_KEY)
+    .set('Accept', 'application/json')
+    .end(function (err, res){
+
+        if (err) {
+            console.log('Err in get template info success test: ', err);
+            t.fail(res.body.message);
+        }
+
+        const template = res.body ? res.body : (res || {});
+        testExpectedTemplate(t, template, expectedTemplate);
+    });
+
+    doBadRequestTests(t, 'GET', templateEndpoint, {token: TOKEN, timestamp: TIMESTAMP});
+});
+
+TODO: Activate this test
+test('Create video', (t) => {
+
+    t.plan(9);
+    const createVideoEndpoint = API_HOST + 'v1/videos/create/';
+    const templateId = '-KR_Tor-2oEhEh8vJpAO';
+    const {TOKEN, TIMESTAMP} = generateAuthInfo(APP_ID, API_SECRET_KEY);
+
+    const videoInputData = {
+        scenes: [{
+            media: ['https://s3.amazonaws.com/re.bucket/images/re.logo.square.png'],
+            text: ['www.hotdog.com'],
+            color: ['#84C53D']
+        }],
+        audio: '',
+        token: TOKEN,
+        timestamp: TIMESTAMP
+    };
+
+    superagent.post(`${createVideoEndpoint}${templateId}`)
+    .send(videoInputData)
+    .set('X-API-Appid', APP_ID)
+    .set('X-API-Key', API_SECRET_KEY)
+    .set('Accept', 'application/json')
+    .end(function (err, res){
+
+        if (err) {
+            console.log('Err in create video success test: ', err);
+            t.fail(res.body.message);
+        }
+
+        const body = res.body ? res.body : (res || {});
+        t.equal(typeof body.jobId === 'string' && body.jobId.length > 0, true, 'Create video Video Job Id exists and is a string');
+    });
+
+    doBadRequestTests(t, 'POST', `${createVideoEndpoint}${templateId}`, videoInputData);
+
+});
+
 
 /*
  * Video progress process
