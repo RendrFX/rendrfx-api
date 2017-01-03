@@ -192,7 +192,7 @@ test('Get template info', (t) => {
 
 test('Get video status', (t) => {
 
-    t.plan(10);
+    t.plan(11);
     const videoStatusEndpoint = API_HOST + 'v1/videos/status/' + VIDEO_JOB_ID;
     const {TOKEN, TIMESTAMP} = generateAuthInfo(APP_ID, API_SECRET_KEY);
     const possibleProgress = {
@@ -209,13 +209,13 @@ test('Get video status', (t) => {
         render: {
             type: 'determinate',
             status: 'render',
-            min: 10,
+            min: 9,
             max: 49
         },
         compile: {
             type: 'determinate',
             status: 'compile',
-            min: 50,
+            min: 49,
             max: 89
         },
         processing: {
@@ -248,26 +248,31 @@ test('Get video status', (t) => {
         if (videoStatus.status === possibleProgress.staging.status) {
 
             t.equal(videoStatus.progress, possibleProgress[videoStatus.status].val, 'Should be 0 percent progress if staging');
+            t.equal(typeof videoStatus.downloadUrl === 'undefined', true, 'Should have undefined downloadUrl');
         } else if (videoStatus.status === possibleProgress.build.status) {
 
             t.equal(videoStatus.progress, possibleProgress[videoStatus.status].val, 'Should be 9 percent progress if build');
+            t.equal(typeof videoStatus.downloadUrl === 'undefined', true, 'Should have undefined downloadUrl');
         } else if (videoStatus.status === possibleProgress.render.status) {
 
             t.equal(
                 (videoStatus.progress >= possibleProgress[videoStatus.status].min && videoStatus.progress <= possibleProgress[videoStatus.status].max),
                 true,
-                'Should be between 10-49 percent progress if render'
+                'Should be between 9-49 percent progress if render'
             );
+            t.equal(typeof videoStatus.downloadUrl === 'undefined', true, 'Should have undefined downloadUrl');
         } else if (videoStatus.status === possibleProgress.compile.status) {
 
             t.equal(
                 (videoStatus.progress >= possibleProgress[videoStatus.status].min && videoStatus.progress <= possibleProgress[videoStatus.status].max),
                 true,
-                'Should be between 50-89 percent progress if compile'
+                'Should be between 49-89 percent progress if compile'
             );
+            t.equal(typeof videoStatus.downloadUrl === 'undefined', true, 'Should have undefined downloadUrl');
         } else if (videoStatus.status === possibleProgress.processing.status) {
 
             t.equal(videoStatus.progress, possibleProgress[videoStatus.status].val, 'Should be 91 percent progress if processing');
+            t.equal(typeof videoStatus.downloadUrl === 'undefined', true, 'Should have undefined downloadUrl');
         } else if (videoStatus.status === possibleProgress.done.status) {
 
             t.equal(videoStatus.progress, possibleProgress[videoStatus.status].val, 'Should be 100 percent progress if done');

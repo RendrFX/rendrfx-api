@@ -267,4 +267,4 @@ A video status object contains the following fields.
 | --- | --- | --- |
 | status | string | The label of the status. `staging`, `build`, `render`, `compile`, `processing`, `done` |
 | progress | int | The percent of video job progress done from 0-100 |
-| downloadUrl | string | Temporary download url for finished video file. *_Only available if the status is done_*. |
+| downloadUrl | string | Temporary download url for finished video file, expires in 30 seconds. *_Only available if the status is done_*. |
