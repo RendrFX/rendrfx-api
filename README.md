@@ -11,9 +11,21 @@ The API is organized around the following resources -
 | Videos | https://api.rendrfx.com/v1/videos/create | This endpoint will allow for a video job to be created |
 | Videos | https://api.rendrfx.com/v1/videos/status/:job_id | This endpoint will allow for a video job status to be accessed |
 
-**Job Completed Payload Delivery**
 
-Payload will be delivered via server to server webhook.
+## Job Completed Payload Delivery
+Upon creating an api account, you will need to supply an absolute url to be attached to your account.
+
+When a video job is completed, RendrFX servers will make a `GET` request to the url -
+
+**Web hook payload**
+
+|Query Parameters| Description |
+|----------------| ----------- |
+| jobId | The video job ID for the finished video|
+
+* Example web hook url request - `curl -s https://yourwebhookurl.com?jobId=-KSc1I_adz07tJi80ABA`
+
+You can then retrieve the video download url by making a request to the [video status endpoint](https://github.com/RendrFX/rendrfx-api#view-status-of-a-video) using the value of the `jobId`.
 
 ## Authentication token
 
@@ -268,3 +280,13 @@ A video status object contains the following fields.
 | status | string | The label of the status. `staging`, `build`, `render`, `compile`, `processing`, `done` |
 | progress | int | The percent of video job progress done from 0-100 |
 | downloadUrl | string | Temporary download url for finished video file, expires in 30 seconds. *_Only available if the status is done_*. |
+
+Example video status object -
+
+```json
+{
+  "status": "done",
+  "progress": 100,
+  "downloadUrl": "https://d15f4icbcssnzk.cloudfront.net/-KZU0Og6tKIN3dGcG2pm/-KSc1I_adz07tJi80AZA/MainRender.mp4?Expires=1483467239&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9kMTVmNGljYmNzc256ay5jbG91ZGZyb250Lm5ldC8tS1pVME9nNnRLSU4zZEdjRzJwbS8tS1NjMUlfYWR6MDd0Smk4MEFaQS9NYWluUmVuZGVyLm1wNCIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTQ4MzQ2NzIzOX19fV19&Signature=h2HsmV~dcSlUR~LNn2EWAreg1~nkMFw9gOPb8~fY~vidS~Oaf8~58mMfKAiLZWtXnVUwsPtswn8vO~mrpgS0f4-SQXscmyq64tYCzd5g8pSVlhdv0DwNxDR8AI97sMJqZyYn1iu1furr0xoArPUtbB-rcZoyiRaLdFCjxl9DicTKedrvTNgN-Al7tSg6rlI9eXZu1W7GTs8VW9acblQUSsb-WKbNrZrIv9cNCBnn-2Znn3yXCWySlI7PEtaur0lPU409rCrfdvLHw8fgv3Lm8e4iMGLmJQyXgoY5Ur-M5LGpvipkKsWRLv4x~66q9fZQ-h9Cbde~KW56C~~DAvBBNg__&Key-Pair-Id=APKAJZ7EMX5IECCB3CUQ"
+}
+```
