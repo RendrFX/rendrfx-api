@@ -45,7 +45,7 @@ const appId = 'your app id';
 const apiSecretKey = 'your secret key';
 
 // Generate HMAC
-const unixTimeInMilliseconds = manualDateInMilliseconds || Date.now(); //Generate timestamp
+const unixTimeInMilliseconds = Date.now(); //Generate timestamp
 const key = apiSecretKey + unixTimeInMilliseconds; //Create key for hash
 const hmac = crypto.createHmac('sha256', key); // Create HMAC instance
 hmac.update(appId); //Sign using appId
