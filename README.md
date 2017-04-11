@@ -1,4 +1,4 @@
-# RendrFX REST API documentaiton
+# RendrFX REST API documentation
 
 
 ## RendrFX API Summary
