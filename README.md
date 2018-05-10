@@ -1,5 +1,7 @@
 # RendrFX REST API documentaiton
 
+To sign up for a free RendrFX API account, please fill out this form: https://rendrfx.typeform.com/to/o6AQxQ
+A free account allows you to make 5 watermarked videos a month through the RendrFX REST API.
 
 ## RendrFX API Summary
 The API is organized around the following resources -

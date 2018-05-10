@@ -136,7 +136,7 @@ test('Get template info', (t) => {
     doBadRequestTests(t, 'GET', templateEndpoint, {token: TOKEN, timestamp: TIMESTAMP});
 });
 
-// // TODO: Activate this test
+// TODO: Activate this test
 // test('Create video', (t) => {
 //
 //     t.plan(9);
@@ -148,9 +148,14 @@ test('Get template info', (t) => {
 //         scenes: [{
 //             media: ['https://s3.amazonaws.com/re.bucket/images/re.logo.square.png'],
 //             text: ['www.hotdog.com'],
-//             color: ['#84C53D']
+//             color: [{
+//                 r: 140,
+//                 g: 19,
+//                 b: 173,
+//                 label: 'Background'
+//             }]
 //         }],
-//         audio: '',
+//         audio: 'http://66.90.94.162/ost/tekken-3-playstation-soundtrack-002/ysvbwyfbwm/25-game-over.mp3',
 //         token: TOKEN,
 //         timestamp: TIMESTAMP
 //     };
@@ -158,7 +163,6 @@ test('Get template info', (t) => {
 //     superagent.post(`${createVideoEndpoint}${templateId}`)
 //     .send(videoInputData)
 //     .set('X-API-Appid', APP_ID)
-//     .set('X-API-Key', API_SECRET_KEY)
 //     .set('Accept', 'application/json')
 //     .end(function (err, res){
 //
@@ -168,6 +172,7 @@ test('Get template info', (t) => {
 //         }
 //
 //         const body = res.body ? res.body : (res || {});
+//         console.log('body', body);
 //         t.equal(typeof body.jobId === 'string' && body.jobId.length > 0, true, 'Create video Video Job Id exists and is a string');
 //     });
 //
@@ -233,7 +238,6 @@ test('Get video status', (t) => {
     superagent.get(videoStatusEndpoint)
     .query({token: TOKEN, timestamp: TIMESTAMP})
     .set('X-API-Appid', APP_ID)
-    .set('X-API-Key', API_SECRET_KEY)
     .set('Accept', 'application/json')
     .end(function (err, res){
 
@@ -243,6 +247,7 @@ test('Get video status', (t) => {
         }
 
         const videoStatus = res.body ? res.body : (res || {});
+        console.log('videoStatus', videoStatus);
         t.equal(videoStatus.status, possibleProgress[videoStatus.status].status, 'Video status should be the same: ' + possibleProgress[videoStatus.status].status);
 
         if (videoStatus.status === possibleProgress.staging.status) {
